@@ -1,0 +1,358 @@
+
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fanx Store - Calculadora Completa</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600;700&family=Inter:wght@400;600;700&display=swap');
+        
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+        
+        .font-roblox {
+            font-family: 'Fredoka', sans-serif;
+        }
+    </style>
+</head>
+<body class="bg-slate-950 text-slate-100 min-h-screen flex flex-col justify-between selection:bg-emerald-500 selection:text-white">
+
+    <!-- Cabeçalho com a Marca da Loja -->
+    <header class="border-b border-emerald-900/40 bg-slate-900/60 backdrop-blur-md sticky top-0 z-50">
+        <div class="max-w-md mx-auto px-4 py-4 flex flex-col items-center justify-center gap-1.5">
+            <div class="flex items-center gap-2.5">
+                <!-- Ícone Estilizado da Fanx Store -->
+                <div class="bg-gradient-to-tr from-emerald-600 to-green-500 p-2 rounded-xl shadow-lg shadow-emerald-500/30">
+                    <i data-lucide="shopping-bag" class="w-5 h-5 text-white"></i>
+                </div>
+                <span class="font-roblox text-2xl font-bold tracking-wide bg-gradient-to-r from-emerald-400 via-green-300 to-white bg-clip-text text-transparent">
+                    FANX STORE
+                </span>
+            </div>
+            <div class="bg-emerald-950/80 border border-emerald-500/40 text-emerald-400 text-[10px] font-roblox font-bold tracking-wider uppercase px-3 py-0.5 rounded-full shadow-sm shadow-emerald-950">
+                Cobrimos o valor da taxa!
+            </div>
+        </div>
+    </header>
+
+    <!-- Conteúdo Principal -->
+    <main class="max-w-md mx-auto px-4 py-6 flex-1 flex flex-col justify-center w-full">
+        
+        <!-- Título Central -->
+        <div class="text-center mb-6">
+            <h1 class="font-roblox text-2xl sm:text-3xl font-bold text-white mb-1">
+                Calculadora Fanx
+            </h1>
+            <p class="text-slate-400 text-xs">
+                Preços oficiais de Robux e Calculadora de Gamepass
+            </p>
+        </div>
+
+        <!-- Seletor de Modos / Abas -->
+        <div class="grid grid-cols-2 gap-2 p-1 bg-slate-900 border border-emerald-900/40 rounded-2xl mb-4">
+            <button id="tab-gamepass-btn" onclick="switchTab('gamepass')" 
+                class="py-2.5 text-xs font-semibold rounded-xl transition-all bg-emerald-600 text-white shadow-md shadow-emerald-900/30">
+                Taxa Gamepass (70/30)
+            </button>
+            <button id="tab-store-btn" onclick="switchTab('store')" 
+                class="py-2.5 text-xs font-semibold rounded-xl text-slate-400 hover:text-white transition-all">
+                Preço em Reais (R$)
+            </button>
+        </div>
+
+        <!-- Painel da Calculadora -->
+        <div class="bg-slate-900 border border-emerald-900/40 rounded-3xl shadow-2xl p-6 space-y-5 relative overflow-hidden">
+            
+            <!-- Brilho de fundo -->
+            <div class="absolute -top-10 -right-10 w-32 h-32 bg-emerald-600/10 rounded-full blur-3xl pointer-events-none"></div>
+
+            <!-- MODO 1: CALCULADORA DE GAMEPASS (30% TAXA ROBLOX) -->
+            <div id="mode-gamepass" class="space-y-5">
+                <div>
+                    <label for="robux-input" class="block text-xs font-semibold uppercase tracking-wider text-slate-400 mb-2 text-center">
+                        Quanto queres receber?
+                    </label>
+                    <div class="relative">
+                        <input type="number" id="robux-input" min="1" placeholder="Ex: 100" value="100" oninput="calculateGamepass()"
+                            class="w-full text-center py-4 bg-slate-950 border-2 border-emerald-500/30 rounded-2xl text-white text-3xl font-bold font-roblox focus:outline-none focus:border-emerald-500 transition-all shadow-inner">
+                        <span class="absolute right-4 top-1/2 -translate-y-1/2 text-xs font-bold text-emerald-400 bg-emerald-500/10 px-2.5 py-1 rounded-lg">
+                            Rxb
+                        </span>
+                    </div>
+                </div>
+
+                <!-- Resultado Destacado -->
+                <div class="bg-gradient-to-b from-emerald-950/40 to-slate-950 border border-emerald-500/20 rounded-2xl p-5 text-center">
+                    <span class="text-xs uppercase tracking-wider font-semibold text-slate-400 block mb-1">
+                        Preço da Gamepass:
+                    </span>
+                    <div class="flex items-center justify-center gap-2">
+                        <span id="price-result" class="font-roblox text-5xl font-extrabold text-white">143</span>
+                        <span class="text-emerald-400 font-roblox font-bold text-xl">Robux</span>
+                    </div>
+                </div>
+
+                <!-- Resumo das Taxas -->
+                <div class="grid grid-cols-2 gap-2 text-center text-xs font-medium">
+                    <div class="bg-slate-950/70 border border-slate-800 p-3 rounded-xl">
+                        <span class="text-slate-400 block mb-0.5">Sua Parte (70%)</span>
+                        <span id="user-share" class="font-roblox font-bold text-emerald-400 text-base">100 Rxb</span>
+                    </div>
+                    <div class="bg-slate-950/70 border border-slate-800 p-3 rounded-xl">
+                        <span class="text-slate-400 block mb-0.5">Taxa Roblox (30%)</span>
+                        <span id="roblox-share" class="font-roblox font-bold text-rose-400 text-base">43 Rxb</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- MODO 2: PREÇO EM REAIS E CONVERSOR DE PREÇOS DA LOJA -->
+            <div id="mode-store" class="space-y-4 hidden">
+                <!-- Sub-seletor interna de conversão -->
+                <div class="flex gap-2 justify-center mb-2 text-xs">
+                    <button id="subtab-rxbxl" onclick="setStoreSubTab('rxbxl')" class="px-3 py-1.5 rounded-lg bg-emerald-500/20 text-emerald-300 font-semibold border border-emerald-500/30">
+                        Robux ➔ Reais
+                    </button>
+                    <button id="subtab-blxrxb" onclick="setStoreSubTab('blxrxb')" class="px-3 py-1.5 rounded-lg bg-slate-950 text-slate-400 font-semibold border border-slate-800">
+                        Reais ➔ Robux
+                    </button>
+                </div>
+
+                <!-- Campo de Entrada Robux -> R$ -->
+                <div id="store-calc-robux">
+                    <label for="store-robux-input" class="block text-xs font-semibold uppercase tracking-wider text-slate-400 mb-2 text-center">
+                        Quantidade de Robux:
+                    </label>
+                    <input type="number" id="store-robux-input" min="1" placeholder="Ex: 100" value="100" oninput="calculateStorePrice()"
+                        class="w-full text-center py-4 bg-slate-950 border-2 border-emerald-500/30 rounded-2xl text-white text-3xl font-bold font-roblox focus:outline-none focus:border-emerald-500 transition-all shadow-inner">
+                </div>
+
+                <!-- Campo de Entrada R$ -> Robux -->
+                <div id="store-calc-brl" class="hidden">
+                    <label for="store-brl-input" class="block text-xs font-semibold uppercase tracking-wider text-slate-400 mb-2 text-center">
+                        Valor em Reais (R$):
+                    </label>
+                    <input type="number" id="store-brl-input" min="0.1" step="0.5" placeholder="Ex: 5" value="5.00" oninput="calculateStorePrice()"
+                        class="w-full text-center py-4 bg-slate-950 border-2 border-emerald-500/30 rounded-2xl text-white text-3xl font-bold font-roblox focus:outline-none focus:border-emerald-500 transition-all shadow-inner">
+                </div>
+
+                <!-- Resultado de Preço da Loja -->
+                <div class="bg-gradient-to-b from-emerald-950/40 to-slate-950 border border-emerald-500/20 rounded-2xl p-5 text-center">
+                    <span id="store-result-label" class="text-xs uppercase tracking-wider font-semibold text-slate-400 block mb-1">
+                        Valor a pagar em Reais:
+                    </span>
+                    <div class="flex items-center justify-center gap-1">
+                        <span id="store-result-value" class="font-roblox text-4xl font-extrabold text-white">R$ 5,00</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Botão de Copiar -->
+            <button id="copy-btn" onclick="copyValue()" class="w-full bg-emerald-600 hover:bg-emerald-500 active:bg-emerald-700 text-white font-semibold py-3.5 px-4 rounded-xl shadow-lg shadow-emerald-600/25 transition-all flex items-center justify-center gap-2 text-sm">
+                <i data-lucide="copy" class="w-4 h-4"></i>
+                <span id="copy-text">Copiar Preço</span>
+            </button>
+
+        </div>
+
+        <!-- Atalhos Rápidos -->
+        <div class="mt-6">
+            <span class="text-xs font-semibold text-slate-500 uppercase tracking-wider block text-center mb-3">
+                Valores Rápidos
+            </span>
+            <div class="grid grid-cols-4 gap-2">
+                <button onclick="setFastValue(100)" class="bg-slate-900 hover:bg-emerald-950/40 border border-slate-800 hover:border-emerald-500/40 py-2.5 rounded-xl font-roblox font-bold text-sm text-slate-200 transition-all">
+                    100
+                </button>
+                <button onclick="setFastValue(500)" class="bg-slate-900 hover:bg-emerald-950/40 border border-slate-800 hover:border-emerald-500/40 py-2.5 rounded-xl font-roblox font-bold text-sm text-slate-200 transition-all">
+                    500
+                </button>
+                <button onclick="setFastValue(1000)" class="bg-slate-900 hover:bg-emerald-950/40 border border-slate-800 hover:border-emerald-500/40 py-2.5 rounded-xl font-roblox font-bold text-sm text-slate-200 transition-all">
+                    1000
+                </button>
+                <button onclick="setFastValue(5000)" class="bg-slate-900 hover:bg-emerald-950/40 border border-slate-800 hover:border-emerald-500/40 py-2.5 rounded-xl font-roblox font-bold text-sm text-slate-200 transition-all">
+                    5000
+                </button>
+            </div>
+        </div>
+
+    </main>
+
+    <!-- Rodapé -->
+    <footer class="py-4 text-center text-xs text-slate-600">
+        Fanx Store &copy; Todos os direitos reservados.
+    </footer>
+
+    <!-- Lógica em JavaScript -->
+    <script>
+        // Inicializa os ícones
+        lucide.createIcons();
+
+        // Tabela oficial de preços da Fanx Store baseada na imagem fornecida
+        // 100 Robux = R$ 5,00 (~0.04982 por robux acima de 1000, ou tabela exata por faixas)
+        function getStorePriceFromRobux(robux) {
+            if (robux <= 0) return 0;
+            
+            // Mapeamentos exatos conhecidos da tabela da imagem:
+            // 100 -> 5.00
+            // 200 -> 9.96
+            // 300 -> 14.95
+            // 400 -> 19.93
+            // 500 -> 24.91
+            // 600 -> 29.89
+            // 700 -> 34.87
+            // 800 -> 39.86
+            // 900 -> 44.84
+            // 1000 -> 49.82
+            // 1500 -> 74.73
+            // 2000 -> 99.64
+            // 2500 -> 124.55
+            // 3000 -> 149.46
+            // 3500 -> 174.37
+            // 4000 -> 199.28
+            // 4500 -> 224.19
+            // 5000 -> 249.10
+            
+            // Taxa base média calculada a partir de 1000 Robux = R$ 49,82 -> ~0.04982 por Robux
+            const rate = 0.04982;
+            return robux * rate;
+        }
+
+        function getRobuxFromStorePrice(brl) {
+            if (brl <= 0) return 0;
+            const rate = 0.04982;
+            return Math.round(brl / rate);
+        }
+        
+        let currentTab = 'gamepass';
+        let storeSubTab = 'rxbxl';
+
+        // Alterna entre as abas principais
+        function switchTab(tab) {
+            currentTab = tab;
+            const btnGamepass = document.getElementById('tab-gamepass-btn');
+            const btnStore = document.getElementById('tab-store-btn');
+            const modeGamepass = document.getElementById('mode-gamepass');
+            const modeStore = document.getElementById('mode-store');
+
+            if (tab === 'gamepass') {
+                btnGamepass.className = 'py-2.5 text-xs font-semibold rounded-xl transition-all bg-emerald-600 text-white shadow-md shadow-emerald-900/30';
+                btnStore.className = 'py-2.5 text-xs font-semibold rounded-xl text-slate-400 hover:text-white transition-all';
+                modeGamepass.classList.remove('hidden');
+                modeStore.classList.add('hidden');
+                calculateGamepass();
+            } else {
+                btnStore.className = 'py-2.5 text-xs font-semibold rounded-xl transition-all bg-emerald-600 text-white shadow-md shadow-emerald-900/30';
+                btnGamepass.className = 'py-2.5 text-xs font-semibold rounded-xl text-slate-400 hover:text-white transition-all';
+                modeStore.classList.remove('hidden');
+                modeGamepass.classList.add('hidden');
+                calculateStorePrice();
+            }
+        }
+
+        // Alterna sub-aba do conversor de preços
+        function setStoreSubTab(sub) {
+            storeSubTab = sub;
+            const btnRxb = document.getElementById('subtab-rxbxl');
+            const btnBrl = document.getElementById('subtab-blxrxb');
+            const calcRobux = document.getElementById('store-calc-robux');
+            const calcBrl = document.getElementById('store-calc-brl');
+
+            if (sub === 'rxbxl') {
+                btnRxb.className = 'px-3 py-1.5 rounded-lg bg-emerald-500/20 text-emerald-300 font-semibold border border-emerald-500/30';
+                btnBrl.className = 'px-3 py-1.5 rounded-lg bg-slate-950 text-slate-400 font-semibold border border-slate-800';
+                calcRobux.classList.remove('hidden');
+                calcBrl.classList.add('hidden');
+            } else {
+                btnBrl.className = 'px-3 py-1.5 rounded-lg bg-emerald-500/20 text-emerald-300 font-semibold border border-emerald-500/30';
+                btnRxb.className = 'px-3 py-1.5 rounded-lg bg-slate-950 text-slate-400 font-semibold border border-slate-800';
+                calcBrl.classList.remove('hidden');
+                calcRobux.classList.add('hidden');
+            }
+            calculateStorePrice();
+        }
+
+        // 1. Cálculo da Gamepass (Taxa 70% / 30%)
+        function calculateGamepass() {
+            const input = document.getElementById('robux-input');
+            let wanted = parseFloat(input.value);
+
+            if (isNaN(wanted) || wanted <= 0) wanted = 0;
+
+            const priceToSet = wanted > 0 ? Math.ceil(wanted / 0.7) : 0;
+            const robloxFee = priceToSet - wanted;
+
+            document.getElementById('price-result').innerText = priceToSet.toLocaleString('pt-BR');
+            document.getElementById('user-share').innerText = `${wanted.toLocaleString('pt-BR')} Rxb`;
+            document.getElementById('roblox-share').innerText = `${robloxFee.toLocaleString('pt-BR')} Rxb`;
+        }
+
+        // 2. Cálculo dos Preços da Loja em Reais
+        function calculateStorePrice() {
+            const label = document.getElementById('store-result-label');
+            const resultDisplay = document.getElementById('store-result-value');
+
+            if (storeSubTab === 'rxbxl') {
+                label.innerText = 'Valor a pagar em Reais:';
+                let robux = parseFloat(document.getElementById('store-robux-input').value);
+                if (isNaN(robux) || robux <= 0) robux = 0;
+
+                const totalBrl = getStorePriceFromRobux(robux);
+                resultDisplay.innerText = 'R$ ' + totalBrl.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+            } else {
+                label.innerText = 'Você recebe aproximadamente:';
+                let brl = parseFloat(document.getElementById('store-brl-input').value);
+                if (isNaN(brl) || brl <= 0) brl = 0;
+
+                const totalRobux = getRobuxFromStorePrice(brl);
+                resultDisplay.innerText = totalRobux.toLocaleString('pt-BR') + ' Robux';
+            }
+        }
+
+        // Define valor através dos botões rápidos
+        function setFastValue(val) {
+            if (currentTab === 'gamepass') {
+                document.getElementById('robux-input').value = val;
+                calculateGamepass();
+            } else {
+                if (storeSubTab !== 'rxbxl') setStoreSubTab('rxbxl');
+                document.getElementById('store-robux-input').value = val;
+                calculateStorePrice();
+            }
+        }
+
+        // Copia apenas o valor numérico calculado
+        function copyValue() {
+            let textToCopy = "";
+
+            if (currentTab === 'gamepass') {
+                textToCopy = document.getElementById('price-result').innerText;
+            } else {
+                textToCopy = document.getElementById('store-result-value').innerText;
+            }
+            
+            const textarea = document.createElement('textarea');
+            textarea.value = textToCopy;
+            document.body.appendChild(textarea);
+            textarea.select();
+            document.execCommand('copy');
+            document.body.removeChild(textarea);
+
+            const copyText = document.getElementById('copy-text');
+            copyText.innerText = "Copiado!";
+            
+            setTimeout(() => {
+                copyText.innerText = "Copiar Preço";
+            }, 2000);
+        }
+
+        // Executa os cálculos iniciais ao carregar a página
+        calculateGamepass();
+    </script>
+</body>
+</html>
